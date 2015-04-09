@@ -1,7 +1,4 @@
 class Board{
-  	var board = Array(" ", " ", " ", " ", " ", " ", " ", " ", " ")
-  	var currentPlayer = "X"
-  	var space = 11
 
 	def printBoard(board: Array[String]): Unit = {
 	    println("Current Board:      		Board Positions:")
@@ -16,32 +13,35 @@ class Board{
 	    println("   |   |             		   |   |        ")
 	}
 
-  	def changeCurrentPlayer = {
- 		if(currentPlayer == "X") { currentPlayer = "O"} else { currentPlayer = "X"}
+  	def changeCurrentPlayer(currentPlayer: (String, String)): (String, String) = {
+ 		var newPlayer = if(currentPlayer._1 == "X") {("O", "Player 2")} else {("X", "Player 1")}
+		return newPlayer
 	}
 
-	def getInput(space: Int): Unit = {
-		board(space - 1) = currentPlayer
+	def makePlay(board: Array[String], space: Int, currentPlayer: (String, String)): Array[String] = {
+		board(space - 1) = currentPlayer._1
+		return board
 	}
 
-	def requestSpace(): Unit = {
+	def requestSpace(board: Array[String]): Int = {
 		println("Enter space to play")
-		space = readInt
-		while(validSpace == false){
+		var space: Int = readInt
+		while(validSpace(board: Array[String], space: Int) == false){
 			println("Space not valid. Please enter an empty space to play")
 			space = readInt
 		}
+		return space
 	}
 
-	def validSpace(): Boolean = {
+	def validSpace(board: Array[String], space: Int): Boolean = {
 		(space > 0) && (space < 10) && (board(space - 1) == " ")
 	}
 
-	def draw() : Boolean = {
+	def draw(board: Array[String]) : Boolean = {
       (board.count(_ == " ") == 0)
     }
 
-	def pWinningLines() : Array[Array[String]] = {
+	def pWinningLines(board: Array[String]) : Array[Array[String]] = {
 		var potentialWinningLines: Array[Array[String]] = (
 				Array(Array(board(0),board(1),board(2)), 
 				Array(board(3),board(4),board(5)),
@@ -55,8 +55,8 @@ class Board{
 		potentialWinningLines
 	}
 
-	def win() : Boolean = {
-		(pWinningLines.map { line =>
+	def win(board: Array[String]) : Boolean = {
+		(pWinningLines(board).map { line =>
       		(winner(line))
         	}) contains (true)
 	}
@@ -70,24 +70,50 @@ class Board{
     	((name) contains ("Y"))
     }
 
+    def playGame(board: Array[String], player: (String, String)): (String, String) = {
+    	def loop(currentPlayer: (String, String)): (String, String) = 
+		if (draw(board) == true || win(board) == true) return changeCurrentPlayer(currentPlayer) 
+		else {
+			println(currentPlayer._2 + " (" + currentPlayer._1 + ") to go next")
+			printBoard(makePlay(board, requestSpace(board), currentPlayer))
+			loop(changeCurrentPlayer(currentPlayer))
+		}
+		loop(player)
+	}
+
+    def endGame(board: Array[String], lastPlayer: (String, String)) = {
+    	printBoard(board)
+		if(win(board) == true){println(lastPlayer._2 + " (" + lastPlayer._1 + ") wins!")}
+		else{println("game is a draw")}
+    }
+
+    def newBoard(): Array[String] = {
+    	return Array(" ", " ", " ", " ", " ", " ", " ", " ", " ")
+    } 
+
+    def playerToStart(): (String, String) = {
+    	if(coinFlip == 0) {val firstPlayer = ("X", "Player 1")
+    		return firstPlayer}
+    	else {val firstPlayer = ("O", "Player 2")
+    		return firstPlayer}
+    }
+
+    def coinFlip(): Int = {
+    	val random: Int = ((System.currentTimeMillis())%2).toInt
+    	return random
+    }
+
 	def main = {
 		while(start == true){
-			while(draw == false && win == false){
-				changeCurrentPlayer
-				printBoard(board)
-				println(currentPlayer + " to go next")
-				requestSpace
-				getInput(space)
-			}
+			val board = newBoard
+			val firstPlayer = playerToStart
 			printBoard(board)
-			if(win == true){println(currentPlayer + " wins!")}
-			else{println("game is a draw")}
-			board = Array(" ", " ", " ", " ", " ", " ", " ", " ", " ")
+			val lastPlayer = playGame(board, firstPlayer)
+			endGame(board, lastPlayer)
 		}
 		println("Goodbye!")
 	}
 }
-
 
 val board = new Board
 board.main
