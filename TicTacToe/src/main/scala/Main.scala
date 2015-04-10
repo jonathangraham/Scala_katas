@@ -22,33 +22,33 @@ class Game{
 	}
 
 	def start(response: String) :Boolean = {
-    	(response.toUpperCase) contains ("Y")
-    }
+    		(response.toUpperCase) contains ("Y")
+    	}
 
-    def readStartLine(): String = {
-    	readLine("Would you like to play Tic Tac Toe? (Y or N)")
-    }
+	def readStartLine(): String = {
+	    	readLine("Would you like to play Tic Tac Toe? (Y or N)")
+	}
 
-    def newBoard(): Array[String] = {
-    	return Array(" ", " ", " ", " ", " ", " ", " ", " ", " ")
-    }
+    	def newBoard(): Array[String] = {
+    		return Array(" ", " ", " ", " ", " ", " ", " ", " ", " ")
+    	}
 
-    def getPlayer1(): Name = {
-    	readLine("Who wants to be X's? Type your name?")
-    }
+    	def getPlayer1(): Name = {
+    		readLine("Who wants to be X's? Type your name?")
+    	}
 
-    def getPlayer2(): Name = {
-    	readLine("Who wants to be O's? Type your name?")
-    }
+    	def getPlayer2(): Name = {
+    		readLine("Who wants to be O's? Type your name?")
+    	}
 
-    def getPlayers(player1: Name, player2: Name, random: Int): ((XO, Name),(XO, Name)) = {
-    	if(random == 0) {(("X", player1), ("O", player2))} 
-    	else {(("O", player2), ("X", player1))}
-    }
+    	def getPlayers(player1: Name, player2: Name, random: Int): ((XO, Name),(XO, Name)) = {
+    		if(random == 0) {(("X", player1), ("O", player2))} 
+    		else {(("O", player2), ("X", player1))}
+    	}
 
-    def coinFlip(): Int = {
-    	((System.currentTimeMillis())%2).toInt
-    }
+    	def coinFlip(): Int = {
+    		((System.currentTimeMillis())%2).toInt
+    	}
 
 	def printStart(board: Array[String], players: ((XO, Name),(XO, Name))): Unit = {
 		println("Flipping coin to see who starts...")
@@ -57,21 +57,21 @@ class Game{
 	}
 	
 	def printBoard(board: Array[String]): Unit = {
-	    println("Current Board:      Board Positions:")
-	    println("   |   |               |   |        ")
-	    println(" " + board(0) + " | " + board(1) + " | " + board(2) + "           1 | 2 | 3      ")
-	    println("___|___|___         ___|___|___     ")
-	    println("   |   |               |   |        ")
-	    println(" " + board(3) + " | " + board(4) + " | " + board(5) + "           4 | 5 | 6      ")
-	    println("___|___|___         ___|___|___     ")
-	    println("   |   |               |   |        ")
-	    println(" " + board(6) + " | " + board(7) + " | " + board(8) + "           7 | 8 | 9      ")
-	    println("   |   |               |   |        ")
+	    	println("Current Board:      Board Positions:")
+	    	println("   |   |               |   |        ")
+	    	println(" " + board(0) + " | " + board(1) + " | " + board(2) + "           1 | 2 | 3      ")
+	    	println("___|___|___         ___|___|___     ")
+	    	println("   |   |               |   |        ")
+	    	println(" " + board(3) + " | " + board(4) + " | " + board(5) + "           4 | 5 | 6      ")
+	    	println("___|___|___         ___|___|___     ")
+	    	println("   |   |               |   |        ")
+	    	println(" " + board(6) + " | " + board(7) + " | " + board(8) + "           7 | 8 | 9      ")
+	    	println("   |   |               |   |        ")
 	}
 
 	def playGame(board: Array[String], players: ((XO, Name),(XO, Name))): (XO, Name) = {
-    	@annotation.tailrec
-    	def loop(currentPlayer: (XO, Name)): (XO, Name) = {
+    		@annotation.tailrec
+    		def loop(currentPlayer: (XO, Name)): (XO, Name) = {
 			if (draw(board) == true || win(board) == true) {
 				return changeCurrentPlayer(currentPlayer, players)
 			} 
@@ -117,8 +117,8 @@ class Game{
 	}
 
 	def draw(board: Array[String]) : Boolean = {
-      	board.count(_ == " ") == 0
-    }
+      		board.count(_ == " ") == 0
+    	}
 
 	def win(board: Array[String]) : Boolean = {
 		pWinningLines(board).map { line =>
@@ -128,23 +128,23 @@ class Game{
 
 	def pWinningLines(board: Array[String]) : Array[Array[String]] = {
 		var potentialWinningLines: Array[Array[String]] = 
-				Array(Array(board(0),board(1),board(2)), 
-				Array(board(3),board(4),board(5)),
-				Array(board(6),board(7),board(8)),
-				Array(board(0),board(3),board(6)),
-				Array(board(1),board(4),board(7)),
-				Array(board(2),board(5),board(8)),
-				Array(board(0),board(4),board(8)),
-				Array(board(2),board(4),board(6))) 
+			Array(Array(board(0),board(1),board(2)), 
+			Array(board(3),board(4),board(5)),
+			Array(board(6),board(7),board(8)),
+			Array(board(0),board(3),board(6)),
+			Array(board(1),board(4),board(7)),
+			Array(board(2),board(5),board(8)),
+			Array(board(0),board(4),board(8)),
+			Array(board(2),board(4),board(6))) 
 		potentialWinningLines
 	}
 
 	def winningLine(line: Array[String]) : Boolean = {
-      !line(0).equals(" ") && line(0).equals(line(1)) && line(1).equals(line(2))
-    }
+      		!line(0).equals(" ") && line(0).equals(line(1)) && line(1).equals(line(2))
+    	}
 
-    def endGame(board: Array[String], lastPlayer: (XO, Name)) = {
+    	def endGame(board: Array[String], lastPlayer: (XO, Name)) = {
 		if(win(board) == true){println(lastPlayer._2 + " (" + lastPlayer._1 + ") wins!")}
 		else{println("game is a draw")}
-    }	
+    	}	
 }
